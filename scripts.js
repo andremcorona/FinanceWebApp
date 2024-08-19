@@ -243,9 +243,9 @@ function updateChart() {
   const chartData = {
     datasets: [{
       data: [totalIncome - totalExpenses, totalExpenses],
-      backgroundColor: totalExpenses > totalIncome ? ['#ffff00', '#ff0000'] : ['#00ff00', '#ff0000'],
+      backgroundColor: totalExpenses > totalIncome ? ['#ffa500', '#ff0000'] : ['#00ff00', '#ff0000'],
     }],
-    labels: totalExpenses > totalIncome ? ['Exceeded Expenses', 'Expenses'] : ['Remaining Income', 'Expenses']
+    labels: totalExpenses > totalIncome ? ['Exceeded', 'Expenses'] : ['Remaining', 'Expenses']
   };
 
   const chartOptions = {
@@ -287,13 +287,27 @@ Chart.register({
         ctx.restore();
         
         // Display Income and Expenses text
-        ctx.font = 'bold 22px Arial';
+        ctx.font = 'bold 20px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#00ff00'; // Green for income
-        ctx.fillText(`Income: $${totalIncome}`, centerX, centerY);
-        ctx.fillStyle = '#ff0000'; // Red for expenses
-        ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 30);
+
+        if(totalExpenses > totalIncome) {
+            ctx.fillStyle = '#007bff'; // Blue for income
+            ctx.fillText(`Income: $${totalIncome}`, centerX, centerY - 10);
+            ctx.fillStyle = '#ff0000'; // Red for expenses
+            ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 15);
+            ctx.fillStyle = '#ffa500'; // Yellow for exceeded
+            ctx.fillText(`Exceeded: $${totalIncome - totalExpenses}`, centerX, centerY + 40);
+        }
+        else {
+            ctx.fillStyle = '#007bff'; // Blue for income
+            ctx.fillText(`Income: $${totalIncome}`, centerX, centerY - 10);
+            ctx.fillStyle = '#ff0000'; // Red for expenses
+            ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 15);
+            ctx.fillStyle = '#00ff00'; // Green for remaining
+            ctx.fillText(`Remaining: $${totalIncome - totalExpenses}`, centerX, centerY + 40);
+        }
+        
   
         ctx.save();
       }
