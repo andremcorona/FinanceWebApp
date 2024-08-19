@@ -53,39 +53,56 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     this.reset();
 });
 
-// Function to display income entries
+
+// Function to display table
+document.getElementById('table-tab').addEventListener('click', function() {
+    document.getElementById('table-tab').classList.add('active');
+    document.getElementById('chart-tab').classList.remove('active');
+    document.getElementById('table-view').style.display = 'block';
+    document.getElementById('chart-view').style.display = 'none';
+});
+  
 function displayIncomeEntries() {
-    const incomeList = document.getElementById('income-entries');
-    incomeList.innerHTML = ''; // Clear existing list
+    const incomeSection = document.getElementById('income-entries-section');
+    incomeSection.innerHTML = '<tr><th colspan="4">Income</th></tr>'; // Clear existing entries
   
     const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
   
-    incomeEntries.forEach((entry, index) => {
-      const li = document.createElement('li');
-      li.textContent = `${entry.date} - ${entry.source}: $${entry.amount} (${entry.notes})`;
-      incomeList.appendChild(li);
+    incomeEntries.forEach((entry) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${entry.date}</td>
+        <td>${entry.source}</td>
+        <td>$${entry.amount}</td>
+        <td>${entry.notes ? entry.notes : ''}</td>
+      `;
+      incomeSection.appendChild(row);
     });
 }
-
-// Function to display expense entries
+  
 function displayExpenseEntries() {
-    const expenseList = document.getElementById('expense-entries');
-    expenseList.innerHTML = ''; // Clear existing list
+    const expenseSection = document.getElementById('expense-entries-section');
+    expenseSection.innerHTML = '<tr><th colspan="4">Expenses</th></tr>'; // Clear existing entries
   
     const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
   
-    expenseEntries.forEach((entry, index) => {
-      const li = document.createElement('li');
-      li.textContent = `${entry.date} - ${entry.category}: $${entry.amount} (${entry.description})`;
-      expenseList.appendChild(li);
+    expenseEntries.forEach((entry) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${entry.date}</td>
+        <td>${entry.category}</td>
+        <td>$${entry.amount}</td>
+        <td>${entry.description ? entry.description : ''}</td>
+      `;
+      expenseSection.appendChild(row);
     });
 }
-
-// Call this function after adding a new income entry
+  
+// Call these functions after adding a new entry
 document.getElementById('income-form').addEventListener('submit', function() {
     displayIncomeEntries();
 });
-// Call this function after adding a new expense entry
+  
 document.getElementById('expense-form').addEventListener('submit', function() {
     displayExpenseEntries();
 });
@@ -93,3 +110,85 @@ document.getElementById('expense-form').addEventListener('submit', function() {
 // Initial display when the page loads
 displayIncomeEntries();
 displayExpenseEntries();
+  
+
+// Function to display chart
+document.getElementById('chart-tab').addEventListener('click', function() {
+    document.getElementById('chart-tab').classList.add('active');
+    document.getElementById('table-tab').classList.remove('active');
+    document.getElementById('table-view').style.display = 'none';
+    document.getElementById('chart-view').style.display = 'block';
+    updateChart();
+});
+  
+let incomeChart, expenseChart;
+
+function updateChart() {
+  const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+
+  const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+  const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+  const chartElement = document.getElementById('income-expense-chart').getContext('2d');
+
+  const chartData = {
+    datasets: [{
+      data: [totalIncome - totalExpenses, totalExpenses],
+      backgroundColor: totalExpenses > totalIncome ? ['#00ff00', '#ff0000'] : ['#00ff00', '#ff0000'],
+    }],
+    labels: ['Remaining Income', 'Expenses']
+  };
+
+  const chartOptions = {
+    responsive: false,  
+    maintainAspectRatio: false,  
+    cutout: '75%',
+    plugins: {
+      centerText: true, // Use the custom plugin to draw text in the center
+    }
+  };
+
+  if (incomeChart) {
+    incomeChart.destroy();
+  }
+
+  incomeChart = new Chart(chartElement, {
+    type: 'doughnut',
+    data: chartData,
+    options: chartOptions
+  });
+}
+
+Chart.register({
+    id: 'centerText',
+    beforeDraw: function(chart) {
+      if (chart.config.type === 'doughnut') {
+        const ctx = chart.ctx;
+        const width = chart.width;
+        const height = chart.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        // Get totalIncome and totalExpenses
+        const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+        const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+        const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+        const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+  
+        ctx.restore();
+        
+        // Display Income and Expenses text
+        ctx.font = 'bold 22px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#00ff00'; // Green for income
+        ctx.fillText(`Income: $${totalIncome}`, centerX, centerY);
+        ctx.fillStyle = '#ff0000'; // Red for expenses
+        ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 30);
+  
+        ctx.save();
+      }
+    }
+  });
+  
