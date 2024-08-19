@@ -8,6 +8,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body> 
+    <div id="top-buttons">
+        <button id="import-data" class="top-button">Import</button>
+        <button id="export-data" class="top-button">Export</button>
+        <button id="clear-data" class="top-button">Clear</button>
+    </div>      
     <div id="forms-container">
         <form id="income-form">
             <h2>Income Entry</h2>
@@ -44,7 +49,7 @@
             <button type="submit">Add Expense</button>
         </form>
     </div>
-    
+
     <div class="tabs">
         <button id="table-tab" class="tab-button active">Table View</button>
         <button id="chart-tab" class="tab-button">Pie Chart View</button>

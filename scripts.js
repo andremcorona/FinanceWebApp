@@ -1,3 +1,56 @@
+document.getElementById('clear-data').addEventListener('click', function() {
+    if (confirm("Are you sure you want to clear all data? This action cannot be undone.")) {
+      localStorage.clear();
+      displayIncomeEntries();
+      displayExpenseEntries();
+      if (incomeChart) {
+        incomeChart.destroy();
+      }
+      alert("All data has been cleared.");
+    }
+});  
+
+document.getElementById('export-data').addEventListener('click', function() {
+    const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+    const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+    const data = {
+      incomeEntries,
+      expenseEntries
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "financial_data.json");
+    document.body.appendChild(downloadAnchorNode); // Required for Firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+});
+ 
+document.getElementById('import-data').addEventListener('click', function() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'application/json';
+  
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = JSON.parse(e.target.result);
+        localStorage.setItem('incomeEntries', JSON.stringify(data.incomeEntries || []));
+        localStorage.setItem('expenseEntries', JSON.stringify(data.expenseEntries || []));
+        displayIncomeEntries();
+        displayExpenseEntries();
+        if (incomeChart) {
+          updateChart();
+        }
+        alert("Data imported successfully.");
+      };
+      reader.readAsText(file);
+    });
+  
+    fileInput.click();
+});
+
 document.getElementById('income-form').addEventListener('submit', function(e) {
     e.preventDefault();
   
@@ -68,35 +121,90 @@ function displayIncomeEntries() {
   
     const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
   
-    incomeEntries.forEach((entry) => {
+    // Sort by date in descending order
+    incomeEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+    incomeEntries.forEach((entry, index) => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${entry.date}</td>
         <td>${entry.source}</td>
         <td>$${entry.amount}</td>
         <td>${entry.notes ? entry.notes : ''}</td>
+        <td><button class="edit-button" data-index="${index}" data-type="income">Edit</button></td>
       `;
       incomeSection.appendChild(row);
     });
+  
+    addEditButtonListeners();
 }
   
-function displayExpenseEntries() {
+  function displayExpenseEntries() {
     const expenseSection = document.getElementById('expense-entries-section');
     expenseSection.innerHTML = '<tr><th colspan="4">Expenses</th></tr>'; // Clear existing entries
   
     const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
   
-    expenseEntries.forEach((entry) => {
+    // Sort by date in descending order
+    expenseEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+    expenseEntries.forEach((entry, index) => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${entry.date}</td>
         <td>${entry.category}</td>
         <td>$${entry.amount}</td>
         <td>${entry.description ? entry.description : ''}</td>
+        <td><button class="edit-button" data-index="${index}" data-type="expense">Edit</button></td>
       `;
       expenseSection.appendChild(row);
     });
+  
+    addEditButtonListeners();
 }
+  
+function addEditButtonListeners() {
+    const editButtons = document.querySelectorAll('.edit-button');
+    editButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const index = this.getAttribute('data-index');
+        const type = this.getAttribute('data-type');
+  
+        if (type === 'income') {
+          const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+          const entry = incomeEntries[index];
+  
+          // Populate the form with the existing data
+          document.getElementById('income-date').value = entry.date;
+          document.getElementById('income-source').value = entry.source;
+          document.getElementById('income-amount').value = entry.amount;
+          document.getElementById('income-notes').value = entry.notes;
+  
+          // Remove the old entry
+          incomeEntries.splice(index, 1);
+          localStorage.setItem('incomeEntries', JSON.stringify(incomeEntries));
+        } else if (type === 'expense') {
+          const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+          const entry = expenseEntries[index];
+  
+          // Populate the form with the existing data
+          document.getElementById('expense-date').value = entry.date;
+          document.getElementById('expense-category').value = entry.category;
+          document.getElementById('expense-amount').value = entry.amount;
+          document.getElementById('expense-description').value = entry.description;
+  
+          // Remove the old entry
+          expenseEntries.splice(index, 1);
+          localStorage.setItem('expenseEntries', JSON.stringify(expenseEntries));
+        }
+  
+        // Update the display after removing the entry
+        displayIncomeEntries();
+        displayExpenseEntries();
+      });
+    });
+}
+  
   
 // Call these functions after adding a new entry
 document.getElementById('income-form').addEventListener('submit', function() {
@@ -135,9 +243,9 @@ function updateChart() {
   const chartData = {
     datasets: [{
       data: [totalIncome - totalExpenses, totalExpenses],
-      backgroundColor: totalExpenses > totalIncome ? ['#00ff00', '#ff0000'] : ['#00ff00', '#ff0000'],
+      backgroundColor: totalExpenses > totalIncome ? ['#ffff00', '#ff0000'] : ['#00ff00', '#ff0000'],
     }],
-    labels: ['Remaining Income', 'Expenses']
+    labels: totalExpenses > totalIncome ? ['Exceeded Expenses', 'Expenses'] : ['Remaining Income', 'Expenses']
   };
 
   const chartOptions = {
