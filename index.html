@@ -1,34 +1,48 @@
-<form id="income-form">
-    <h2>Income Entry</h2>
-    <label for="income-date">Date:</label>
-    <input type="date" id="income-date" name="income-date" required>
-  
-    <label for="income-source">Source:</label>
-    <input type="text" id="income-source" name="income-source" placeholder="e.g., Salary, Freelance" required>
-  
-    <label for="income-amount">Amount:</label>
-    <input type="number" id="income-amount" name="income-amount" placeholder="Enter amount" required>
-  
-    <label for="income-notes">Notes (Optional):</label>
-    <textarea id="income-notes" name="income-notes" placeholder="Add any notes"></textarea>
-  
-    <button type="submit">Add Income</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Financing Website</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body> 
+    
+    <form id="income-form">
+        <h2>Income Entry</h2>
+        <label for="income-date">Date:</label>
+        <input type="date" id="income-date" name="income-date" required>
+    
+        <label for="income-source">Source:</label>
+        <input type="text" id="income-source" name="income-source" placeholder="e.g., Salary, Freelance" required>
+    
+        <label for="income-amount">Amount:</label>
+        <input type="number" id="income-amount" name="income-amount" placeholder="Enter amount" required>
+    
+        <label for="income-notes">Notes (Optional):</label>
+        <textarea id="income-notes" name="income-notes" placeholder="Add any notes"></textarea>
+    
+        <button type="submit">Add Income</button>
+    </form>
 
 
-<form id="expense-form">
-    <h2>Expense Entry</h2>
-    <label for="expense-date">Date:</label>
-    <input type="date" id="expense-date" name="expense-date" required>
-  
-    <label for="expense-category">Category:</label>
-    <input type="text" id="expense-category" name="expense-category" placeholder="e.g., Groceries, Utilities" required>
-  
-    <label for="expense-amount">Amount:</label>
-    <input type="number" id="expense-amount" name="expense-amount" placeholder="Enter amount" required>
-  
-    <label for="expense-description">Description (Optional):</label>
-    <textarea id="expense-description" name="expense-description" placeholder="Add any description"></textarea>
-  
-    <button type="submit">Add Expense</button>
-</form>
+    <form id="expense-form">
+        <h2>Expense Entry</h2>
+        <label for="expense-date">Date:</label>
+        <input type="date" id="expense-date" name="expense-date" required>
+    
+        <label for="expense-category">Category:</label>
+        <input type="text" id="expense-category" name="expense-category" placeholder="e.g., Groceries, Utilities" required>
+    
+        <label for="expense-amount">Amount:</label>
+        <input type="number" id="expense-amount" name="expense-amount" placeholder="Enter amount" required>
+    
+        <label for="expense-description">Description (Optional):</label>
+        <textarea id="expense-description" name="expense-description" placeholder="Add any description"></textarea>
+    
+        <button type="submit">Add Expense</button>
+    </form>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
