@@ -177,5 +177,5 @@ function parseTextFile(textContent) {
       updateChart();
     }
   
-    alert("Data imported successfully.");
+    //alert("Data imported successfully.");
 }

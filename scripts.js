@@ -8,7 +8,7 @@ document.getElementById('clear-data').addEventListener('click', function() {
       if (incomeChart) {
         incomeChart.destroy();
       }
-      alert("All data has been cleared.");
+      //alert("All data has been cleared.");
     }
 });  
 
@@ -38,28 +38,21 @@ document.getElementById('export-data').addEventListener('click', function() {
  
 // When Import Button is clicked, import current data
 document.getElementById('import-data').addEventListener('click', function() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'application/json';
-  
-    fileInput.addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const data = JSON.parse(e.target.result);
-        localStorage.setItem('incomeEntries', JSON.stringify(data.incomeEntries || []));
-        localStorage.setItem('expenseEntries', JSON.stringify(data.expenseEntries || []));
-        displayIncomeEntries();
-        displayExpenseEntries();
-        if (incomeChart) {
-          updateChart();
-        }
-        alert("Data imported successfully.");
-      };
-      reader.readAsText(file);
-    });
-  
-    fileInput.click();
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'text/plain';
+
+  fileInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const textContent = e.target.result;
+      parseTextFile(textContent);
+    };
+    reader.readAsText(file);
+  });
+
+  fileInput.click();
 });
 
 
