@@ -1,3 +1,5 @@
+// Top Buttons
+// When Clear Button is clicked, clear all current data
 document.getElementById('clear-data').addEventListener('click', function() {
     if (confirm("Are you sure you want to clear all data? This action cannot be undone.")) {
       localStorage.clear();
@@ -10,22 +12,31 @@ document.getElementById('clear-data').addEventListener('click', function() {
     }
 });  
 
+// When Export Button is clicked, export current data
 document.getElementById('export-data').addEventListener('click', function() {
-    const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-    const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
-    const data = {
-      incomeEntries,
-      expenseEntries
-    };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "financial_data.json");
-    document.body.appendChild(downloadAnchorNode); // Required for Firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+  const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+
+  let textContent = "Income Entries:\n";
+  incomeEntries.forEach(entry => {
+    textContent += `Date: ${entry.date}, Source: ${entry.source}, Amount: $${entry.amount}, Notes: ${entry.notes || ''}\n`;
+  });
+
+  textContent += "\nExpense Entries:\n";
+  expenseEntries.forEach(entry => {
+    textContent += `Date: ${entry.date}, Category: ${entry.category}, Amount: $${entry.amount}, Description: ${entry.description || ''}\n`;
+  });
+
+  const blob = new Blob([textContent], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "financial_data.txt";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 });
  
+// When Import Button is clicked, import current data
 document.getElementById('import-data').addEventListener('click', function() {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -51,6 +62,9 @@ document.getElementById('import-data').addEventListener('click', function() {
     fileInput.click();
 });
 
+
+// Income/Expense Forms
+// When Income entry is submited, store it
 document.getElementById('income-form').addEventListener('submit', function(e) {
     e.preventDefault();
   
@@ -78,7 +92,7 @@ document.getElementById('income-form').addEventListener('submit', function(e) {
     this.reset();
 });
   
-  
+// When Expense entry is submited, store it
 document.getElementById('expense-form').addEventListener('submit', function(e) {
     e.preventDefault();
   
@@ -105,122 +119,32 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     // Clear the form
     this.reset();
 });
-
-
-// Function to display table
+  
+// Table
+// Display the table at start and when pressed
 document.getElementById('table-tab').addEventListener('click', function() {
     document.getElementById('table-tab').classList.add('active');
     document.getElementById('chart-tab').classList.remove('active');
     document.getElementById('table-view').style.display = 'block';
     document.getElementById('chart-view').style.display = 'none';
 });
-  
-function displayIncomeEntries() {
-    const incomeSection = document.getElementById('income-entries-section');
-    incomeSection.innerHTML = '<tr><th colspan="4">Income</th></tr>'; // Clear existing entries
-  
-    const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-  
-    // Sort by date in descending order
-    incomeEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-    incomeEntries.forEach((entry, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${entry.date}</td>
-        <td>${entry.source}</td>
-        <td>$${entry.amount}</td>
-        <td>${entry.notes ? entry.notes : ''}</td>
-        <td><button class="edit-button" data-index="${index}" data-type="income">Edit</button></td>
-      `;
-      incomeSection.appendChild(row);
-    });
-  
-    addEditButtonListeners();
-}
-  
-  function displayExpenseEntries() {
-    const expenseSection = document.getElementById('expense-entries-section');
-    expenseSection.innerHTML = '<tr><th colspan="4">Expenses</th></tr>'; // Clear existing entries
-  
-    const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
-  
-    // Sort by date in descending order
-    expenseEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-    expenseEntries.forEach((entry, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${entry.date}</td>
-        <td>${entry.category}</td>
-        <td>$${entry.amount}</td>
-        <td>${entry.description ? entry.description : ''}</td>
-        <td><button class="edit-button" data-index="${index}" data-type="expense">Edit</button></td>
-      `;
-      expenseSection.appendChild(row);
-    });
-  
-    addEditButtonListeners();
-}
-  
-function addEditButtonListeners() {
-    const editButtons = document.querySelectorAll('.edit-button');
-    editButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const index = this.getAttribute('data-index');
-        const type = this.getAttribute('data-type');
-  
-        if (type === 'income') {
-          const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-          const entry = incomeEntries[index];
-  
-          // Populate the form with the existing data
-          document.getElementById('income-date').value = entry.date;
-          document.getElementById('income-source').value = entry.source;
-          document.getElementById('income-amount').value = entry.amount;
-          document.getElementById('income-notes').value = entry.notes;
-  
-          // Remove the old entry
-          incomeEntries.splice(index, 1);
-          localStorage.setItem('incomeEntries', JSON.stringify(incomeEntries));
-        } else if (type === 'expense') {
-          const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
-          const entry = expenseEntries[index];
-  
-          // Populate the form with the existing data
-          document.getElementById('expense-date').value = entry.date;
-          document.getElementById('expense-category').value = entry.category;
-          document.getElementById('expense-amount').value = entry.amount;
-          document.getElementById('expense-description').value = entry.description;
-  
-          // Remove the old entry
-          expenseEntries.splice(index, 1);
-          localStorage.setItem('expenseEntries', JSON.stringify(expenseEntries));
-        }
-  
-        // Update the display after removing the entry
-        displayIncomeEntries();
-        displayExpenseEntries();
-      });
-    });
-}
-  
-  
-// Call these functions after adding a new entry
+
+// List the income in the table
 document.getElementById('income-form').addEventListener('submit', function() {
     displayIncomeEntries();
 });
   
+// List the expense in the table
 document.getElementById('expense-form').addEventListener('submit', function() {
     displayExpenseEntries();
 });
-  
+
 // Initial display when the page loads
 displayIncomeEntries();
 displayExpenseEntries();
-  
 
-// Function to display chart
+// Chart
+// Display chart when pressed
 document.getElementById('chart-tab').addEventListener('click', function() {
     document.getElementById('chart-tab').classList.add('active');
     document.getElementById('table-tab').classList.remove('active');
@@ -229,45 +153,7 @@ document.getElementById('chart-tab').addEventListener('click', function() {
     updateChart();
 });
   
-let incomeChart, expenseChart;
-
-function updateChart() {
-  const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
-
-  const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-  const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-
-  const chartElement = document.getElementById('income-expense-chart').getContext('2d');
-
-  const chartData = {
-    datasets: [{
-      data: [totalIncome - totalExpenses, totalExpenses],
-      backgroundColor: totalExpenses > totalIncome ? ['#ffa500', '#ff0000'] : ['#00ff00', '#ff0000'],
-    }],
-    labels: totalExpenses > totalIncome ? ['Exceeded', 'Expenses'] : ['Remaining', 'Expenses']
-  };
-
-  const chartOptions = {
-    responsive: false,  
-    maintainAspectRatio: false,  
-    cutout: '75%',
-    plugins: {
-      centerText: true, // Use the custom plugin to draw text in the center
-    }
-  };
-
-  if (incomeChart) {
-    incomeChart.destroy();
-  }
-
-  incomeChart = new Chart(chartElement, {
-    type: 'doughnut',
-    data: chartData,
-    options: chartOptions
-  });
-}
-
+// Draw Pie Chart 
 Chart.register({
     id: 'centerText',
     beforeDraw: function(chart) {
@@ -300,7 +186,7 @@ Chart.register({
             ctx.fillText(`Exceeded: $${totalIncome - totalExpenses}`, centerX, centerY + 40);
         }
         else {
-            ctx.fillStyle = '#007bff'; // Blue for income
+            ctx.fillStyle = '#000000'; // Blue for income
             ctx.fillText(`Income: $${totalIncome}`, centerX, centerY - 10);
             ctx.fillStyle = '#ff0000'; // Red for expenses
             ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 15);
@@ -312,5 +198,4 @@ Chart.register({
         ctx.save();
       }
     }
-  });
-  
+});

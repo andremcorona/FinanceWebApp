@@ -8,11 +8,13 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body> 
+    <!-- These buttons allow the user to start from saved data, export current data and start from scratch -->
     <div id="top-buttons">
         <button id="import-data" class="top-button">Import</button>
         <button id="export-data" class="top-button">Export</button>
         <button id="clear-data" class="top-button">Clear</button>
-    </div>      
+    </div>
+    <!-- Only two forms are needed for now, items are deemed as either Income or Expenses-->      
     <div id="forms-container">
         <form id="income-form">
             <h2>Income Entry</h2>
@@ -30,8 +32,6 @@
         
             <button type="submit">Add Income</button>
         </form>
-
-
         <form id="expense-form">
             <h2>Expense Entry</h2>
             <label for="expense-date">Date:</label>
@@ -49,7 +49,7 @@
             <button type="submit">Add Expense</button>
         </form>
     </div>
-
+    <!-- Allow the user to select how they wish to view their Income/Expenses (more will be added later)-->
     <div class="tabs">
         <button id="table-tab" class="tab-button active">Table View</button>
         <button id="chart-tab" class="tab-button">Pie Chart View</button>
@@ -76,15 +76,14 @@
               </tr>
               <!-- Expense rows will be dynamically added here -->
             </tbody>
-          </table>
-          
+          </table>   
     </div>
     <div id="chart-view" class="view-section">
         <canvas id="income-expense-chart"></canvas>
     </div>
 
-
-
+    <!-- Include the used .js files-->
+    <script src="utils.js"></script>
     <script src="scripts.js"></script>
 </body>
 </html>
