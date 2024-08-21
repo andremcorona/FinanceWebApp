@@ -86,7 +86,10 @@ document.getElementById('income-form').addEventListener('submit', function(e) {
     // Save the updated income entries array back to localStorage
     localStorage.setItem('incomeEntries', JSON.stringify(incomeEntries));
   
-    console.log('Income Added:', incomeEntry);
+    // Update the table and chart immediately
+    displayIncomeEntries();
+    updateChart();
+    //console.log('Income Added:', incomeEntry);
   
     // Clear the form
     this.reset();
@@ -114,12 +117,16 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     // Save the updated expense entries array back to localStorage
     localStorage.setItem('expenseEntries', JSON.stringify(expenseEntries));
   
-    console.log('Expense Added:', expenseEntry);
+    // Update the table and chart immediately
+    displayExpenseEntries();
+    updateChart();
+    //console.log('Expense Added:', expenseEntry);
   
     // Clear the form
     this.reset();
 });
-  
+
+
 // Table
 // Display the table at start and when pressed
 document.getElementById('table-tab').addEventListener('click', function() {
@@ -127,16 +134,6 @@ document.getElementById('table-tab').addEventListener('click', function() {
     document.getElementById('chart-tab').classList.remove('active');
     document.getElementById('table-view').style.display = 'block';
     document.getElementById('chart-view').style.display = 'none';
-});
-
-// List the income in the table
-document.getElementById('income-form').addEventListener('submit', function() {
-    displayIncomeEntries();
-});
-  
-// List the expense in the table
-document.getElementById('expense-form').addEventListener('submit', function() {
-    displayExpenseEntries();
 });
 
 // Initial display when the page loads

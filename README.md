@@ -1,8 +1,8 @@
 Welcome to my FinanceWebApp!
 
-I have created this finance tracker because I wanted a simple tracker that:
+I have created this finance tracker because I wanted a simple tracker for myself that:
 1. Did not ask for my personal bank info.
-2. Did not make me create an account just to use the tracker.
+2. Did not make me create an account just to use features.
 3. Wasn't complicated, only income and expenses to list.
 4. Allowed me to export my data and import them as I please.
 
