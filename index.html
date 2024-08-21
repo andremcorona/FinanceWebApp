@@ -25,7 +25,7 @@
             <input type="text" id="income-source" name="income-source" placeholder="e.g., Salary, Freelance" required>
         
             <label for="income-amount">Amount:</label>
-            <input type="number" id="income-amount" name="income-amount" placeholder="Enter amount" required>
+            <input type="number" id="income-amount" name="income-amount" placeholder="Enter amount" step="0.01" required>
         
             <label for="income-notes">Notes (Optional):</label>
             <textarea id="income-notes" name="income-notes" placeholder="Add any notes"></textarea>
@@ -41,7 +41,7 @@
             <input type="text" id="expense-category" name="expense-category" placeholder="e.g., Groceries, Utilities" required>
         
             <label for="expense-amount">Amount:</label>
-            <input type="number" id="expense-amount" name="expense-amount" placeholder="Enter amount" required>
+            <input type="number" id="expense-amount" name="expense-amount" placeholder="Enter amount" step="0.01" required>
         
             <label for="expense-description">Description (Optional):</label>
             <textarea id="expense-description" name="expense-description" placeholder="Add any description"></textarea>
@@ -52,8 +52,10 @@
     <!-- Allow the user to select how they wish to view their Income/Expenses (more will be added later)-->
     <div class="tabs">
         <button id="table-tab" class="tab-button active">Table View</button>
-        <button id="chart-tab" class="tab-button">Pie Chart View</button>
+        <button id="chart-tab" class="tab-button">Income vs Expense View</button>
+        <button id="planner-tab" class="tab-button">Planner View</button>
     </div>
+    <!-- Simple Table Format -->
     <div id="table-view" class="view-section">
         <table id="income-expense-table" class="income-expense-table">
             <thead>
@@ -76,11 +78,17 @@
               </tr>
               <!-- Expense rows will be dynamically added here -->
             </tbody>
-          </table>   
+          </table>            
     </div>
+    <!-- Pie Chart Format -->
     <div id="chart-view" class="view-section">
         <canvas id="income-expense-chart"></canvas>
     </div>
+    <!-- Calender Planner Format -->
+    <div id="planner-view" class="view-section" style="display:none;">
+      <div id="planner-container"></div>
+    </div>
+    
 
     <!-- Include the used .js files-->
     <script src="utils.js"></script>

@@ -75,7 +75,8 @@ button:hover {
 .tabs {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
   
 .tab-button {
@@ -95,6 +96,10 @@ button:hover {
     color: white;
 }
   
+#table-view {
+    padding-left: 7%;
+}
+
 .income-expense-table {
     width: 100%;
     border-collapse: collapse;
@@ -147,3 +152,75 @@ button:hover {
       max-width: 100%; /* Full width on small screens */
     }
 }
+
+.edit-td {
+    display: flex;
+    justify-content: center;
+    max-width: 80px;
+}
+
+
+#planner-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+.calendar {
+    border: 1px solid #ddd;
+    background-color: #007bff;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: 750px;
+}
+  
+.calendar h3 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+  
+.calendar-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.day-box {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    text-align: center;
+    vertical-align: top;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+}
+  
+.day-box h3 {
+    display: block;
+    color: black;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.day-box span {
+    display: block;
+    font-size: 12px;
+}
+
+.positive-balance {
+    color: green;
+    font-weight: bold;
+}
+  
+.negative-balance {
+    color: red;
+    font-weight: bold;
+}
+  

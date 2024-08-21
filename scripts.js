@@ -82,6 +82,7 @@ document.getElementById('income-form').addEventListener('submit', function(e) {
     // Update the table and chart immediately
     displayIncomeEntries();
     updateChart();
+    generatePlannerView();
     //console.log('Income Added:', incomeEntry);
   
     // Clear the form
@@ -113,6 +114,7 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     // Update the table and chart immediately
     displayExpenseEntries();
     updateChart();
+    generatePlannerView();
     //console.log('Expense Added:', expenseEntry);
   
     // Clear the form
@@ -125,8 +127,11 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
 document.getElementById('table-tab').addEventListener('click', function() {
     document.getElementById('table-tab').classList.add('active');
     document.getElementById('chart-tab').classList.remove('active');
+    document.getElementById('planner-tab').classList.remove('active');
+
     document.getElementById('table-view').style.display = 'block';
     document.getElementById('chart-view').style.display = 'none';
+    document.getElementById('planner-view').style.display = 'none';
 });
 
 // Initial display when the page loads
@@ -138,8 +143,12 @@ displayExpenseEntries();
 document.getElementById('chart-tab').addEventListener('click', function() {
     document.getElementById('chart-tab').classList.add('active');
     document.getElementById('table-tab').classList.remove('active');
+    document.getElementById('planner-tab').classList.remove('active');
+
     document.getElementById('table-view').style.display = 'none';
     document.getElementById('chart-view').style.display = 'block';
+    document.getElementById('planner-view').style.display = 'none';
+
     updateChart();
 });
   
@@ -169,23 +178,36 @@ Chart.register({
 
         if(totalExpenses > totalIncome) {
             ctx.fillStyle = '#007bff'; // Blue for income
-            ctx.fillText(`Income: $${totalIncome}`, centerX, centerY - 10);
+            ctx.fillText(`Income: $${(totalIncome).toFixed(2)}`, centerX, centerY - 10);
             ctx.fillStyle = '#ff0000'; // Red for expenses
-            ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 15);
-            ctx.fillStyle = '#ffa500'; // Yellow for exceeded
-            ctx.fillText(`Exceeded: $${totalIncome - totalExpenses}`, centerX, centerY + 40);
+            ctx.fillText(`Expenses: $${(totalExpenses).toFixed(2)}`, centerX, centerY + 15);
+            ctx.fillStyle = '#ffa500'; // Orange for exceeded
+            ctx.fillText(`Exceeded: $${(totalIncome - totalExpenses).toFixed(2)}`, centerX, centerY + 40);
         }
         else {
             ctx.fillStyle = '#000000'; // Blue for income
-            ctx.fillText(`Income: $${totalIncome}`, centerX, centerY - 10);
+            ctx.fillText(`Income: $${(totalIncome).toFixed(2)}`, centerX, centerY - 10);
             ctx.fillStyle = '#ff0000'; // Red for expenses
-            ctx.fillText(`Expenses: $${totalExpenses}`, centerX, centerY + 15);
+            ctx.fillText(`Expenses: $${(totalExpenses).toFixed(2)}`, centerX, centerY + 15);
             ctx.fillStyle = '#00ff00'; // Green for remaining
-            ctx.fillText(`Remaining: $${totalIncome - totalExpenses}`, centerX, centerY + 40);
+            ctx.fillText(`Remaining: $${(totalIncome - totalExpenses).toFixed(2)}`, centerX, centerY + 40);
         }
         
   
         ctx.save();
       }
     }
+});
+
+// Display the planner when pressed
+document.getElementById('planner-tab').addEventListener('click', function() {
+  document.getElementById('table-tab').classList.remove('active');
+  document.getElementById('chart-tab').classList.remove('active');
+  document.getElementById('planner-tab').classList.add('active');
+
+  document.getElementById('table-view').style.display = 'none';
+  document.getElementById('chart-view').style.display = 'none';
+  document.getElementById('planner-view').style.display = 'block';
+
+  generatePlannerView(); // Generate the planner view when the tab is clicked
 });

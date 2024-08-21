@@ -16,9 +16,9 @@ function displayIncomeEntries() {
       row.innerHTML = `
         <td>${entry.date}</td>
         <td>${entry.source}</td>
-        <td>$${entry.amount}</td>
+        <td>$${parseFloat(entry.amount).toFixed(2)}</td>
         <td>${entry.notes ? entry.notes : ''}</td>
-        <td><button class="edit-button" data-index="${index}" data-type="income">Edit</button></td>
+        <td class="edit-td"><button class="edit-button" data-index="${index}" data-type="income">Edit</button></td>
       `;
       incomeSection.appendChild(row);
     });
@@ -42,9 +42,9 @@ function displayExpenseEntries() {
       row.innerHTML = `
         <td>${entry.date}</td>
         <td>${entry.category}</td>
-        <td>$${entry.amount}</td>
+        <td>$${parseFloat(entry.amount).toFixed(2)}</td>
         <td>${entry.description ? entry.description : ''}</td>
-        <td><button class="edit-button" data-index="${index}" data-type="expense">Edit</button></td>
+        <td class="edit-td"><button class="edit-button" data-index="${index}" data-type="expense">Edit</button></td>
       `;
       expenseSection.appendChild(row);
     });
@@ -178,4 +178,73 @@ function parseTextFile(textContent) {
     }
   
     //alert("Data imported successfully.");
+}
+
+// generatePlannerView
+// This function will generate a calender type of view for users to estimate their budget for the month
+function generatePlannerView() {
+    const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+    const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+  
+    const allEntries = [...incomeEntries, ...expenseEntries];
+    
+    // Extract unique months and sort them in order (January to December)
+    const months = [...new Set(allEntries.map(entry => entry.date.slice(0, 7)))];
+    months.sort(); // Sort months in YYYY-MM order
+  
+    const plannerContainer = document.getElementById('planner-container');
+    plannerContainer.innerHTML = ''; // Clear previous content
+  
+    let cumulativeBalance = 0; // Initialize cumulative balance
+  
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June", "July", 
+      "August", "September", "October", "November", "December"
+    ];
+  
+    months.forEach(month => {
+      const [year, monthNumber] = month.split('-');
+      const daysInMonth = new Date(year, monthNumber, 0).getDate();
+      const calendar = document.createElement('div');
+      calendar.className = 'calendar';
+  
+      // Convert month number to month name
+      const monthName = monthNames[parseInt(monthNumber, 10) - 1];
+  
+      calendar.innerHTML = `<h3>${monthName} ${year}</h3>`;
+  
+      let dailyBalance = cumulativeBalance; // Start each month with the cumulative balance
+      let calendarRow = document.createElement('div');
+      calendarRow.className = 'calendar-row';
+  
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${month}-${String(day).padStart(2, '0')}`;
+        
+        // Adjust balance based on income/expenses for the current day
+        incomeEntries.forEach(entry => {
+          if (entry.date === dateStr) dailyBalance += parseFloat(entry.amount);
+        });
+        expenseEntries.forEach(entry => {
+          if (entry.date === dateStr) dailyBalance -= parseFloat(entry.amount);
+        });
+  
+        const dayBox = document.createElement('div');
+        dayBox.className = 'day-box';
+        const balanceClass = dailyBalance < 0 ? 'negative-balance' : 'positive-balance';
+        dayBox.innerHTML = `<h3 class="day-num">${day}</h3><br><span class="${balanceClass}">$${dailyBalance.toFixed(2)}</span>`;
+        calendarRow.appendChild(dayBox);
+  
+        // Start a new row every 7 days
+        if (day % 7 === 0 || day === daysInMonth) {
+          calendar.appendChild(calendarRow);
+          calendarRow = document.createElement('div');
+          calendarRow.className = 'calendar-row';
+        }
+      }
+  
+      // Update cumulative balance to carry over to the next month
+      cumulativeBalance = dailyBalance;
+  
+      plannerContainer.appendChild(calendar);
+    });
 }
