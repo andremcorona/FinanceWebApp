@@ -97,10 +97,10 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     const date = document.getElementById('expense-date').value;
     const category = document.getElementById('expense-category').value;
     const amount = document.getElementById('expense-amount').value;
-    const description = document.getElementById('expense-description').value;
+    const tag = document.getElementById('expense-tag').value;
   
     // Create an expense entry object
-    const expenseEntry = { date, category, amount, description };
+    const expenseEntry = { date, category, amount, description: tag };
   
     // Retrieve existing expense entries from localStorage or initialize an empty array
     let expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
@@ -123,15 +123,17 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
 
 
 // Table
-// Display the table at start and when pressed
+// Display the table at start and when pressed open window
 document.getElementById('table-tab').addEventListener('click', function() {
     document.getElementById('table-tab').classList.add('active');
     document.getElementById('chart-tab').classList.remove('active');
     document.getElementById('planner-tab').classList.remove('active');
+    document.getElementById('budget-tab').classList.remove('active');
 
     document.getElementById('table-view').style.display = 'block';
     document.getElementById('chart-view').style.display = 'none';
     document.getElementById('planner-view').style.display = 'none';
+    document.getElementById('budget-view').style.display = 'none';
 });
 
 // Initial display when the page loads
@@ -139,24 +141,27 @@ displayIncomeEntries();
 displayExpenseEntries();
 
 // Chart
-// Display chart when pressed
+// Display chart window when pressed
 document.getElementById('chart-tab').addEventListener('click', function() {
     document.getElementById('chart-tab').classList.add('active');
     document.getElementById('table-tab').classList.remove('active');
     document.getElementById('planner-tab').classList.remove('active');
+    document.getElementById('budget-tab').classList.remove('active');
+
 
     document.getElementById('table-view').style.display = 'none';
     document.getElementById('chart-view').style.display = 'block';
     document.getElementById('planner-view').style.display = 'none';
+    document.getElementById('budget-view').style.display = 'none';
 
     updateChart();
 });
   
-// Draw Pie Chart 
+// Draw Pie Chart & Budget Rule Chart
 Chart.register({
     id: 'centerText',
     beforeDraw: function(chart) {
-      if (chart.config.type === 'doughnut') {
+      if (chart.canvas.id === 'income-expense-chart') {
         const ctx = chart.ctx;
         const width = chart.width;
         const height = chart.height;
@@ -192,22 +197,155 @@ Chart.register({
             ctx.fillStyle = '#00ff00'; // Green for remaining
             ctx.fillText(`Remaining: $${(totalIncome - totalExpenses).toFixed(2)}`, centerX, centerY + 40);
         }
-        
   
+        ctx.save();
+      }
+
+      if (chart.canvas.id === 'budget-chart-532') {
+        const ctx = chart.ctx;
+        const width = chart.width;
+        const height = chart.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        // Get totalIncome and totalExpenses
+        const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+        const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+        let total = { Need: 0, Investment: 0, Want: 0 };
+  
+        expenseEntries.forEach(entry => {
+          total[entry.description] += parseFloat(entry.amount);
+        });
+
+        const needPercent = total.Need / totalExpenses * 100;
+        const investmentPercent = total.Investment / totalExpenses * 100;
+        const wantPercent = total.Want / totalExpenses * 100;
+  
+        ctx.restore();
+        
+        // Display Income and Expenses text
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if(needPercent <= 50) {
+          ctx.fillStyle = '#00ff00';
+          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
+        }
+        else {
+          ctx.fillStyle = '#ff0000'; 
+          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
+        }
+
+        if(investmentPercent <= 30) {
+          ctx.fillStyle = '#00ff00';
+          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
+        }
+        else {
+          ctx.fillStyle = '#ff0000';
+          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
+        }
+
+        if(wantPercent <= 20) {
+          ctx.fillStyle = '00ff00';
+          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
+        }
+        else {
+          ctx.fillStyle = 'ff0000';
+          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
+        }
+  
+        ctx.save();
+      }
+
+      if (chart.canvas.id === 'budget-chart-721') {
+        const ctx = chart.ctx;
+        const width = chart.width;
+        const height = chart.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        // Get totalExpenses
+        const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+        const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+        let total = { Need: 0, Investment: 0, Want: 0 };
+  
+        expenseEntries.forEach(entry => {
+          total[entry.description] += parseFloat(entry.amount);
+        });
+
+        const needPercent = total.Need / totalExpenses * 100;
+        const investmentPercent = total.Investment / totalExpenses * 100;
+        const wantPercent = total.Want / totalExpenses * 100;
+  
+        ctx.restore();
+        
+        // Display Income and Expenses text
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if(needPercent <= 70) {
+          ctx.fillStyle = '#00ff00';
+          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
+        }
+        else {
+          ctx.fillStyle = '#ff0000'; 
+          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
+        }
+
+        if(investmentPercent <= 20) {
+          ctx.fillStyle = '#00ff00';
+          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
+        }
+        else {
+          ctx.fillStyle = '#ff0000';
+          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
+        }
+
+        if(wantPercent <= 10) {
+          ctx.fillStyle = '00ff00';
+          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
+        }
+        else {
+          ctx.fillStyle = 'ff0000';
+          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
+        }
+
         ctx.save();
       }
     }
 });
 
-// Display the planner when pressed
+// Display the planner window when pressed
 document.getElementById('planner-tab').addEventListener('click', function() {
   document.getElementById('table-tab').classList.remove('active');
   document.getElementById('chart-tab').classList.remove('active');
   document.getElementById('planner-tab').classList.add('active');
+  document.getElementById('budget-tab').classList.remove('active');
+
 
   document.getElementById('table-view').style.display = 'none';
   document.getElementById('chart-view').style.display = 'none';
   document.getElementById('planner-view').style.display = 'block';
+  document.getElementById('budget-view').style.display = 'none';
 
   generatePlannerView(); // Generate the planner view when the tab is clicked
+});
+
+// Display the dudget rule window when pressed
+document.getElementById('budget-tab').addEventListener('click', function() {
+  document.getElementById('table-tab').classList.remove('active');
+  document.getElementById('chart-tab').classList.remove('active');
+  document.getElementById('planner-tab').classList.remove('active');
+  document.getElementById('budget-tab').classList.add('active');
+
+  document.getElementById('table-view').style.display = 'none';
+  document.getElementById('chart-view').style.display = 'none';
+  document.getElementById('planner-view').style.display = 'none';
+  document.getElementById('budget-view').style.display = 'block';
+
+  generateBudgetCharts();
 });

@@ -43,8 +43,12 @@
             <label for="expense-amount">Amount:</label>
             <input type="number" id="expense-amount" name="expense-amount" placeholder="Enter amount" step="0.01" required>
         
-            <label for="expense-description">Description (Optional):</label>
-            <textarea id="expense-description" name="expense-description" placeholder="Add any description"></textarea>
+            <label for="expense-tag">Tag:</label>
+            <select id="expense-tag" required>
+              <option value="Need">Need</option>
+              <option value="Investment">Investment</option>
+              <option value="Want">Want</option>
+            </select>
         
             <button type="submit">Add Expense</button>
         </form>
@@ -54,8 +58,9 @@
         <button id="table-tab" class="tab-button active">Table View</button>
         <button id="chart-tab" class="tab-button">Income vs Expense View</button>
         <button id="planner-tab" class="tab-button">Planner View</button>
+        <button id="budget-tab" class="tab-button">Budget Rule View</button>
     </div>
-    <!-- Simple Table Format -->
+    <!-- Table Layout -->
     <div id="table-view" class="view-section">
         <table id="income-expense-table" class="income-expense-table">
             <thead>
@@ -80,15 +85,21 @@
             </tbody>
           </table>            
     </div>
-    <!-- Pie Chart Format -->
+    <!-- Pie Chart Layout -->
     <div id="chart-view" class="view-section">
         <canvas id="income-expense-chart"></canvas>
     </div>
-    <!-- Calender Planner Format -->
+    <!-- Calender Planner Layout -->
     <div id="planner-view" class="view-section" style="display:none;">
       <div id="planner-container"></div>
+    <!-- Budget Rule Layout-->
     </div>
-    
+    <div id="budget-view" class="view-section" style="display:none;">
+      <div class="chart-container">
+        <canvas id="budget-chart-532"></canvas>
+        <canvas id="budget-chart-721"></canvas>
+      </div>
+    </div>
 
     <!-- Include the used .js files-->
     <script src="utils.js"></script>

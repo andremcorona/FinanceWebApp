@@ -223,4 +223,17 @@ button:hover {
     color: red;
     font-weight: bold;
 }
+
+.chart-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px;
+}
+  
+#budget-chart-532,
+#budget-chart-721 {
+    max-width: 400px;
+    height: 400px;
+}
   

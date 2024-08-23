@@ -248,3 +248,63 @@ function generatePlannerView() {
       plannerContainer.appendChild(calendar);
     });
 }
+
+// variables used in generateBudgetChart()
+let budgetChart532, budgetChart721;
+// 
+//
+function generateBudgetCharts() {
+  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+  
+  let total = { Need: 0, Investment: 0, Want: 0 };
+  
+  expenseEntries.forEach(entry => {
+    total[entry.description] += parseFloat(entry.amount);
+  });
+
+  // Data for the 50/30/20 chart
+  const chartData532 = {
+    labels: ['Needs', 'Investments', 'Wants'],
+    datasets: [{
+      data: [total.Need.toFixed(2), total.Investment.toFixed(2), total.Want.toFixed(2)],
+      backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe'],
+    }]
+  };
+
+  // Data for the 70/20/10 chart
+  const chartData721 = {
+    labels: ['Needs', 'Investments', 'Wants'],
+    datasets: [{
+      data: [(total.Need * 70 / 50).toFixed(2), (total.Investment * 20 / 30).toFixed(2), (total.Want * 10 / 20).toFixed(2)],
+      backgroundColor: ['#ff9f40', '#4bc0c0', '#ffcd56'],
+    }]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '75%',
+  };
+
+  // Generate 50/30/20 chart
+  const chartElement532 = document.getElementById('budget-chart-532').getContext('2d');
+  if (budgetChart532) {
+    budgetChart532.destroy();
+  }
+  budgetChart532 = new Chart(chartElement532, {
+    type: 'doughnut',
+    data: chartData532,
+    options: chartOptions,
+  });
+
+  // Generate 70/20/10 chart
+  const chartElement721 = document.getElementById('budget-chart-721').getContext('2d');
+  if (budgetChart721) {
+    budgetChart721.destroy();
+  }
+  budgetChart721 = new Chart(chartElement721, {
+    type: 'doughnut',
+    data: chartData721,
+    options: chartOptions,
+  });
+}
