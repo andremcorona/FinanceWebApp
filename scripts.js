@@ -59,36 +59,61 @@ document.getElementById('import-data').addEventListener('click', function() {
 // Income/Expense Forms
 // When Income entry is submited, store it
 document.getElementById('income-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-  
-    // Get form values
-    const date = document.getElementById('income-date').value;
-    const source = document.getElementById('income-source').value;
-    const amount = document.getElementById('income-amount').value;
-    const notes = document.getElementById('income-notes').value;
-  
-    // Create an income entry object
-    const incomeEntry = { date, source, amount, notes };
-  
-    // Retrieve existing income entries from localStorage or initialize an empty array
-    let incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-  
-    // Add the new income entry to the array
-    incomeEntries.push(incomeEntry);
-  
-    // Save the updated income entries array back to localStorage
-    localStorage.setItem('incomeEntries', JSON.stringify(incomeEntries));
-  
-    // Update the table and chart immediately
-    displayIncomeEntries();
-    updateChart();
-    generatePlannerView();
-    generateBudgetComparison();
-    //console.log('Income Added:', incomeEntry);
-  
-    // Clear the form
-    this.reset();
+  e.preventDefault();
+
+  // Get form values
+  const date = new Date(document.getElementById('income-date').value);
+  const source = document.getElementById('income-source').value;
+  const amount = parseFloat(document.getElementById('income-amount').value);
+  const occurrence = document.getElementById('income-occurrence').value;
+
+  // Determine the number of occurrences and the interval
+  let occurrences = [];
+  let interval;
+
+  switch (occurrence) {
+    case 'One-Time':
+      interval = 0; // days
+      break;
+    case 'Weekly':
+      interval = 7; // days
+      break;
+    case 'Bi-Weekly':
+      interval = 14; // days
+      break;
+    case 'Monthly':
+      interval = 30; // approximately a month (can adjust for specific months later)
+      break;
+    default:
+      interval = 0;
+  }
+
+  // Generate occurrences
+  for (let i = 0; i < 12; i++) { // Let's assume we want to generate occurrences for 12 periods
+    const newDate = new Date(date);
+    newDate.setDate(date.getDate() + (i * interval));
+    occurrences.push({ date: newDate.toISOString().split('T')[0], source, amount, occurrence });
+  }
+
+  // Retrieve existing income entries from localStorage or initialize an empty array
+  let incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+
+  // Add the generated occurrences to the array
+  incomeEntries = incomeEntries.concat(occurrences);
+
+  // Save the updated income entries array back to localStorage
+  localStorage.setItem('incomeEntries', JSON.stringify(incomeEntries));
+
+  // Update the table and chart immediately
+  displayIncomeEntries();
+  updateChart();
+  generatePlannerView();
+  generateBudgetComparison();
+
+  // Clear the form
+  this.reset();
 });
+
   
 // When Expense entry is submited, store it
 document.getElementById('expense-form').addEventListener('submit', function(e) {
@@ -98,10 +123,10 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     const date = document.getElementById('expense-date').value;
     const category = document.getElementById('expense-category').value;
     const amount = document.getElementById('expense-amount').value;
-    const tag = document.getElementById('expense-tag').value;
+    const occurance = document.getElementById('expense-occurance').value;
   
     // Create an expense entry object
-    const expenseEntry = { date, category, amount, description: tag };
+    const expenseEntry = { date, category, amount, occurance };
   
     // Retrieve existing expense entries from localStorage or initialize an empty array
     let expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];

@@ -135,7 +135,19 @@ button:hover {
     display: flex;
     justify-content: space-between; /* Space between the forms */
     gap: 20px; /* Space between the forms */
-  }
+}
+
+#forms-container select {
+    width: 99%;
+}
+
+#forms-container input {
+    width: 97%;
+}
+
+#forms-container button {
+    margin-top: 15px;
+}
   
 #income-form, #expense-form {
     flex: 1; /* Makes the forms take up equal space */

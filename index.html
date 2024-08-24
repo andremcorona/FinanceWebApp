@@ -27,9 +27,14 @@
             <label for="income-amount">Amount:</label>
             <input type="number" id="income-amount" name="income-amount" placeholder="Enter amount" step="0.01" required>
         
-            <label for="income-notes">Notes (Optional):</label>
-            <textarea id="income-notes" name="income-notes" placeholder="Add any notes"></textarea>
-        
+            <label for="income-occurrence">Occurence:</label>
+            <select id="income-occurrence" required>
+              <option value="One-Time">One-Time</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Bi-Weekly">Bi-Weekly</option>
+              <option value="Monthly">Monthly</option>
+            </select>
+
             <button type="submit">Add Income</button>
         </form>
         <form id="expense-form">
@@ -87,7 +92,7 @@
     </div>
     <!-- Pie Chart Layout -->
     <div id="chart-view" class="view-section">
-        <canvas id="income-expense-chart"></canvas>
+        <canvas id="income-expense-chart" width="400" height="400"></canvas>
     </div>
     <!-- Calender Planner Layout -->
     <div id="planner-view" class="view-section" style="display:none;">

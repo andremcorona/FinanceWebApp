@@ -17,7 +17,7 @@ function displayIncomeEntries() {
         <td>${entry.date}</td>
         <td>${entry.source}</td>
         <td>$${parseFloat(entry.amount).toFixed(2)}</td>
-        <td>${entry.notes ? entry.notes : ''}</td>
+        <td>${entry.occurrence ? entry.occurrence : ''}</td>
         <td class="edit-td"><button class="edit-button" data-index="${index}" data-type="income">Edit</button></td>
       `;
       incomeSection.appendChild(row);
