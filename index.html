@@ -58,7 +58,7 @@
         <button id="table-tab" class="tab-button active">Table View</button>
         <button id="chart-tab" class="tab-button">Income vs Expense View</button>
         <button id="planner-tab" class="tab-button">Planner View</button>
-        <button id="budget-tab" class="tab-button">Budget Rule View</button>
+        <button id="budget-rule-tab" class="tab-button">Budget Rule View</button>
     </div>
     <!-- Table Layout -->
     <div id="table-view" class="view-section">
@@ -92,12 +92,46 @@
     <!-- Calender Planner Layout -->
     <div id="planner-view" class="view-section" style="display:none;">
       <div id="planner-container"></div>
-    <!-- Budget Rule Layout-->
     </div>
-    <div id="budget-view" class="view-section" style="display:none;">
-      <div class="chart-container">
-        <canvas id="budget-chart-532"></canvas>
-        <canvas id="budget-chart-721"></canvas>
+    <!-- Budget Rule Layout-->
+    <div id="budget-rule-view" class="view-section" style="display:none;">
+      <div class="comparison-container">
+        <div id="comparison-chart">
+          <canvas id="budget-chart" width="400" height="400"></canvas>
+        </div>
+        <div id="comparison-table">
+          <h3>Comparison Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>50/30/20 Rule</th>
+                <th>70/20/10 Rule</th>
+                <th>Your Spending</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Needs</td>
+                <td id="needs-532">50%</td>
+                <td id="needs-721">70%</td>
+                <td id="needs-current">--%</td>
+              </tr>
+              <tr>
+                <td>Investments</td>
+                <td id="investments-532">30%</td>
+                <td id="investments-721">20%</td>
+                <td id="investments-current">--%</td>
+              </tr>
+              <tr>
+                <td>Wants</td>
+                <td id="wants-532">20%</td>
+                <td id="wants-721">10%</td>
+                <td id="wants-current">--%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 

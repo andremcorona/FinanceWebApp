@@ -224,16 +224,54 @@ button:hover {
     font-weight: bold;
 }
 
-.chart-container {
+.comparison-container {
     display: flex;
-    justify-content: space-around;
+    justify-content:center;
     align-items: center;
     margin-top: 20px;
 }
   
-#budget-chart-532,
-#budget-chart-721 {
+#budget-chart {
     max-width: 400px;
-    height: 400px;
+    max-height: 400px;
+}
+
+#comparison-table {
+    width: 360px;
+    justify-content: center;
+}
+  
+#comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#comparison-table h3 {
+    width: 100%;
+    text-align: center;
+}
+  
+#comparison-table th, #comparison-table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+  
+#comparison-table th {
+    background-color: #f4f4f4;
+}
+  
+#comparison-table td {
+    background-color: #fff;
+}
+  
+#comparison-table .good {
+    color: green;
+    font-weight: bold;
+}
+  
+#comparison-table .bad {
+    color: red;
+    font-weight: bold;
 }
   
