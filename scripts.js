@@ -218,9 +218,9 @@ Chart.register({
           total[entry.description] += parseFloat(entry.amount);
         });
 
-        const needPercent = total.Need / totalExpenses * 100;
-        const investmentPercent = total.Investment / totalExpenses * 100;
-        const wantPercent = total.Want / totalExpenses * 100;
+        const needPercent = (total.Need / totalExpenses) * 100;
+        const investmentPercent = (total.Investment / totalExpenses) * 100;
+        const wantPercent = (total.Want / totalExpenses) * 100;
   
         ctx.restore();
         
@@ -229,32 +229,28 @@ Chart.register({
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        if(needPercent <= 50) {
-          ctx.fillStyle = '#00ff00';
-          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
-        }
-        else {
-          ctx.fillStyle = '#ff0000'; 
-          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
-        }
+        //Display title of 50/30/20
+        ctx.fillStyle = '#ff6384';
+        ctx.fillText(`50`, centerX - 25, centerY - 20);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(`/`, centerX - 10, centerY - 20);
+        ctx.fillStyle = '#36a2eb';
+        ctx.fillText(` 30 `, centerX + 5, centerY - 20);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(`/`, centerX + 20, centerY - 20);
+        ctx.fillStyle = '#cc65fe';
+        ctx.fillText(`20`, centerX + 35, centerY - 20);
 
-        if(investmentPercent <= 30) {
-          ctx.fillStyle = '#00ff00';
-          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
-        }
-        else {
-          ctx.fillStyle = '#ff0000';
-          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
-        }
 
-        if(wantPercent <= 20) {
-          ctx.fillStyle = '00ff00';
-          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
-        }
-        else {
-          ctx.fillStyle = 'ff0000';
-          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
-        }
+        // Display the percentages and change color based on if conditions are met.
+        ctx.fillStyle = needPercent <= 50 ? '#00ff00' : '#ff0000';
+        ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY + 5);
+
+        ctx.fillStyle = investmentPercent <= 30 ? '#00ff00' : '#ff0000';
+        ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 30);
+
+        ctx.fillStyle = wantPercent <= 20 ? '#00ff00' : '#ff0000';
+        ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 55);
   
         ctx.save();
       }
@@ -287,32 +283,27 @@ Chart.register({
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        if(needPercent <= 70) {
-          ctx.fillStyle = '#00ff00';
-          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
-        }
-        else {
-          ctx.fillStyle = '#ff0000'; 
-          ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY - 10);
-        }
+        //Display title of 70/20/10
+        ctx.fillStyle = '#ff9f40';
+        ctx.fillText(`70`, centerX - 25, centerY - 20);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(`/`, centerX - 10, centerY - 20);
+        ctx.fillStyle = '#4bc0c0';
+        ctx.fillText(` 20 `, centerX + 5, centerY - 20);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(`/`, centerX + 20, centerY - 20);
+        ctx.fillStyle = '#ffcd56';
+        ctx.fillText(`10`, centerX + 35, centerY - 20);
 
-        if(investmentPercent <= 20) {
-          ctx.fillStyle = '#00ff00';
-          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
-        }
-        else {
-          ctx.fillStyle = '#ff0000';
-          ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 15);
-        }
+        // Display the percentages and change color based on if conditions are met.
+        ctx.fillStyle = needPercent <= 70 ? '#00ff00' : '#ff0000';
+        ctx.fillText(`Needs: ${(needPercent).toFixed(2)}%`, centerX, centerY + 5);
 
-        if(wantPercent <= 10) {
-          ctx.fillStyle = '00ff00';
-          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
-        }
-        else {
-          ctx.fillStyle = 'ff0000';
-          ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 40);
-        }
+        ctx.fillStyle = investmentPercent <= 20 ? '#00ff00' : '#ff0000';
+        ctx.fillText(`Investments: ${(investmentPercent).toFixed(2)}%`, centerX, centerY + 30);
+
+        ctx.fillStyle = wantPercent <= 10 ? '#00ff00' : '#ff0000';
+        ctx.fillText(`Wants: ${(wantPercent).toFixed(2)}%`, centerX, centerY + 55);
 
         ctx.save();
       }
