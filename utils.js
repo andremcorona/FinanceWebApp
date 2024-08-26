@@ -2,11 +2,11 @@
 
 // displayIncomeEntries
 // This function
-function displayIncomeEntries() {
+function displayIncomeEntries(dataKey = 'incomeEntries') {
     const incomeSection = document.getElementById('income-entries-section');
     incomeSection.innerHTML = '<tr><th colspan="4">Income</th></tr>'; // Clear existing entries
   
-    const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+    const incomeEntries = JSON.parse(localStorage.getItem(dataKey)) || [];
   
     // Sort by date in descending order
     incomeEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -28,11 +28,11 @@ function displayIncomeEntries() {
 
 // displayExpenseEntries
 // This function
-function displayExpenseEntries() {
+function displayExpenseEntries(dataKey = 'expenseEntries') {
     const expenseSection = document.getElementById('expense-entries-section');
     expenseSection.innerHTML = '<tr><th colspan="4">Expenses</th></tr>'; // Clear existing entries
   
-    const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+    const expenseEntries = JSON.parse(localStorage.getItem(dataKey)) || [];
   
     // Sort by date in descending order
     expenseEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -96,46 +96,7 @@ function addEditButtonListeners() {
     });
 }
 
-// variables used in updateChart()
-let incomeChart, expenseChart;
-// updateChart
-// This function will update the chart based on the relationship between Income and Expenses
-function updateChart() {
-  const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
 
-  const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-  const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-
-  const chartElement = document.getElementById('income-expense-chart').getContext('2d');
-
-  const chartData = {
-    datasets: [{
-      data: [totalIncome - totalExpenses, totalExpenses],
-      backgroundColor: totalExpenses > totalIncome ? ['#ffa500', '#ff0000'] : ['#00ff00', '#ff0000'],
-    }],
-    labels: totalExpenses > totalIncome ? ['Exceeded', 'Expenses'] : ['Remaining', 'Expenses']
-  };
-
-  const chartOptions = {
-    responsive: false,  
-    maintainAspectRatio: false,  
-    cutout: '75%',
-    plugins: {
-      centerText: true, // Use the custom plugin to draw text in the center
-    }
-  };
-
-  if (incomeChart) {
-    incomeChart.destroy();
-  }
-
-  incomeChart = new Chart(chartElement, {
-    type: 'doughnut',
-    data: chartData,
-    options: chartOptions
-  });
-}
 
 // parseTextFile
 // This function will search through the txt file for patterns that match the export format only (for now)
@@ -195,7 +156,7 @@ function generatePlannerView() {
     const plannerContainer = document.getElementById('planner-container');
     plannerContainer.innerHTML = ''; // Clear previous content
   
-    let cumulativeBalance = 0; // Initialize cumulative balance
+    //let cumulativeBalance = 0; // Initialize cumulative balance
   
     const monthNames = [
       "January", "February", "March", "April", "May", "June", "July", 
@@ -213,7 +174,7 @@ function generatePlannerView() {
   
       calendar.innerHTML = `<h3>${monthName} ${year}</h3>`;
   
-      let dailyBalance = cumulativeBalance; // Start each month with the cumulative balance
+      let dailyBalance = 0; // Start each month with the cumulative balance
       let calendarRow = document.createElement('div');
       calendarRow.className = 'calendar-row';
   
@@ -243,18 +204,59 @@ function generatePlannerView() {
       }
   
       // Update cumulative balance to carry over to the next month
-      cumulativeBalance = dailyBalance;
+      //cumulativeBalance = dailyBalance;
   
       plannerContainer.appendChild(calendar);
     });
+}
+
+// variables used in updateChart()
+let incomeChart, expenseChart;
+// updateChart
+// This function will update the chart based on the relationship between Income and Expenses
+function updateChart(incomeKey = 'incomeEntries', expenseKey = 'expenseEntries') {
+  const incomeEntries = JSON.parse(localStorage.getItem(incomeKey)) || [];
+  const expenseEntries = JSON.parse(localStorage.getItem(expenseKey)) || [];
+
+  const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+  const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+  const chartElement = document.getElementById('income-expense-chart').getContext('2d');
+
+  const chartData = {
+    datasets: [{
+      data: [totalIncome - totalExpenses, totalExpenses],
+      backgroundColor: totalExpenses > totalIncome ? ['#ffa500', '#ff0000'] : ['#00ff00', '#ff0000'],
+    }],
+    labels: totalExpenses > totalIncome ? ['Exceeded', 'Expenses'] : ['Remaining', 'Expenses']
+  };
+
+  const chartOptions = {
+    responsive: false,  
+    maintainAspectRatio: false,  
+    cutout: '75%',
+    plugins: {
+      centerText: true, // Use the custom plugin to draw text in the center
+    }
+  };
+
+  if (incomeChart) {
+    incomeChart.destroy();
+  }
+
+  incomeChart = new Chart(chartElement, {
+    type: 'doughnut',
+    data: chartData,
+    options: chartOptions
+  });
 }
 
 // variables used in generateBudgetComparison()
 let budgetChart;
 // 
 // This function will generate the 
-function generateBudgetComparison() {
-  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+function generateBudgetComparison(incomeKey = 'incomeEntries', expenseKey = 'expenseEntries') {
+  const expenseEntries = JSON.parse(localStorage.getItem(expenseKey)) || [];
   
   let total = { Need: 0, Investment: 0, Want: 0 };
   let totalExpenses = 0;
@@ -308,4 +310,81 @@ function generateBudgetComparison() {
   document.getElementById('investments-721').className = investmentsPercent <= 20 ? 'good' : 'bad';
   document.getElementById('wants-721').className = wantsPercent <= 10 ? 'good' : 'bad';
 
+}
+
+function populateMonthList() {
+  const monthList = document.getElementById('month-list');
+  monthList.innerHTML = ''; // Clear any existing items
+
+  // Add the "Overall" option
+  const overallItem = document.createElement('li');
+  overallItem.textContent = 'Overall';
+  overallItem.dataset.month = 'overall';
+  monthList.appendChild(overallItem);
+
+  // Get the unique months from income and expense entries
+  const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+  const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+
+  const months = new Set();
+
+  incomeEntries.forEach(entry => {
+    const month = entry.date.slice(0, 7); // Get the "YYYY-MM" part of the date
+    months.add(month);
+  });
+
+  expenseEntries.forEach(entry => {
+    const month = entry.date.slice(0, 7); // Get the "YYYY-MM" part of the date
+    months.add(month);
+  });
+
+  // Sort months in chronological order
+  const sortedMonths = Array.from(months).sort();
+
+  // Add each month to the sidebar
+  sortedMonths.forEach(month => {
+    const monthItem = document.createElement('li');
+    monthItem.textContent = new Date(`${month}-01`).toLocaleString('default', { month: 'long', year: 'numeric' });
+    monthItem.dataset.month = month;
+    monthList.appendChild(monthItem);
+  });
+
+  // Add event listeners to each list item
+  document.querySelectorAll('#month-list li').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('#month-list li').forEach(li => li.classList.remove('active'));
+      this.classList.add('active');
+      updateViewForMonth(this.dataset.month);
+    });
+  });
+}
+
+// Call this function when your application initializes
+populateMonthList();
+
+function updateViewForMonth(month) {
+  if (month === 'overall') {
+    // Display overall data
+    displayIncomeEntries();
+    displayExpenseEntries();
+    updateChart();
+    generateBudgetComparison();
+  } else {
+    // Filter data for the selected month
+    const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
+    const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
+
+    const filteredIncomeEntries = incomeEntries.filter(entry => entry.date.startsWith(month));
+    const filteredExpenseEntries = expenseEntries.filter(entry => entry.date.startsWith(month));
+
+    // Temporarily store filtered data for display purposes
+    localStorage.setItem('filteredIncomeEntries', JSON.stringify(filteredIncomeEntries));
+    localStorage.setItem('filteredExpenseEntries', JSON.stringify(filteredExpenseEntries));
+
+    // Display the filtered data
+    displayIncomeEntries('filteredIncomeEntries');
+    displayExpenseEntries('filteredExpenseEntries');
+    updateChart('filteredIncomeEntries', 'filteredExpenseEntries');
+    generateBudgetComparison('filteredIncomeEntries', 'filteredExpenseEntries');
+  }
 }

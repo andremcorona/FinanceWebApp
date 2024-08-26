@@ -89,10 +89,16 @@ document.getElementById('income-form').addEventListener('submit', function(e) {
   }
 
   // Generate occurrences
-  for (let i = 0; i < 12; i++) { // Let's assume we want to generate occurrences for 12 periods
+  if (occurrence === 'One-Time') {
+    const newDate = new Date(date);
+    occurrences.push({ date: newDate.toISOString().split('T')[0], source, amount, occurrence });
+  }
+  else {
+    for (let i = 0; i < 4; i++) { // Let's assume we want to generate occurrences for 4 periods
     const newDate = new Date(date);
     newDate.setDate(date.getDate() + (i * interval));
     occurrences.push({ date: newDate.toISOString().split('T')[0], source, amount, occurrence });
+    }
   }
 
   // Retrieve existing income entries from localStorage or initialize an empty array
@@ -123,10 +129,10 @@ document.getElementById('expense-form').addEventListener('submit', function(e) {
     const date = document.getElementById('expense-date').value;
     const category = document.getElementById('expense-category').value;
     const amount = document.getElementById('expense-amount').value;
-    const occurance = document.getElementById('expense-occurance').value;
+    const tag = document.getElementById('expense-tag').value;
   
     // Create an expense entry object
-    const expenseEntry = { date, category, amount, occurance };
+    const expenseEntry = { date, category, amount, tag };
   
     // Retrieve existing expense entries from localStorage or initialize an empty array
     let expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
@@ -161,6 +167,8 @@ document.getElementById('table-tab').addEventListener('click', function() {
     document.getElementById('chart-view').style.display = 'none';
     document.getElementById('planner-view').style.display = 'none';
     document.getElementById('budget-rule-view').style.display = 'none';
+
+    document.getElementById('sidebar-container').style.display = 'none';
 });
 
 // Initial display when the page loads
@@ -180,6 +188,8 @@ document.getElementById('chart-tab').addEventListener('click', function() {
     document.getElementById('chart-view').style.display = 'block';
     document.getElementById('planner-view').style.display = 'none';
     document.getElementById('budget-rule-view').style.display = 'none';
+
+    document.getElementById('sidebar-container').style.display = 'block';
 
     updateChart();
 });
@@ -282,6 +292,8 @@ document.getElementById('planner-tab').addEventListener('click', function() {
   document.getElementById('planner-view').style.display = 'block';
   document.getElementById('budget-rule-view').style.display = 'none';
 
+  document.getElementById('sidebar-container').style.display = 'none';
+
   generatePlannerView(); // Generate the planner view when the tab is clicked
 });
 
@@ -296,6 +308,8 @@ document.getElementById('budget-rule-tab').addEventListener('click', function() 
   document.getElementById('chart-view').style.display = 'none';
   document.getElementById('planner-view').style.display = 'none';
   document.getElementById('budget-rule-view').style.display = 'block';
+  
+  document.getElementById('sidebar-container').style.display = 'block';
 
   generateBudgetComparison();
 });

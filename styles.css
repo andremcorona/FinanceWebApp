@@ -236,6 +236,47 @@ button:hover {
     font-weight: bold;
 }
 
+.sidebar {
+    width: 95vw;
+    background-color: #f4f4f4;
+    padding: 20px;
+    left: 0;
+    height: 100%;
+    border: 4px solid #ddd;
+    margin-bottom: 20px;
+}
+  
+.sidebar h3 {
+    text-align: center;
+    margin-top: 0;
+}
+  
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+  
+.sidebar ul li {
+    padding: 20px;
+    cursor: pointer;
+    border-right: 1px solid #ddd;
+    transition: background-color 0.3s;
+    display: inline-block;
+    align-items: center;
+    justify-content: space-between;
+}
+  
+.sidebar ul li:hover {
+    background-color: #e0e0e0;
+}
+  
+.sidebar ul li.active {
+    background-color: #007bff;
+    color: white;
+}
+
+
 .comparison-container {
     display: flex;
     justify-content:center;

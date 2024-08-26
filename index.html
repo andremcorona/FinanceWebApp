@@ -61,8 +61,8 @@
     <!-- Allow the user to select how they wish to view their Income/Expenses (more will be added later)-->
     <div class="tabs">
         <button id="table-tab" class="tab-button active">Table View</button>
-        <button id="chart-tab" class="tab-button">Income vs Expense View</button>
         <button id="planner-tab" class="tab-button">Planner View</button>
+        <button id="chart-tab" class="tab-button">Income vs Expense View</button>
         <button id="budget-rule-tab" class="tab-button">Budget Rule View</button>
     </div>
     <!-- Table Layout -->
@@ -90,13 +90,23 @@
             </tbody>
           </table>            
     </div>
-    <!-- Pie Chart Layout -->
-    <div id="chart-view" class="view-section">
-        <canvas id="income-expense-chart" width="400" height="400"></canvas>
-    </div>
     <!-- Calender Planner Layout -->
     <div id="planner-view" class="view-section" style="display:none;">
       <div id="planner-container"></div>
+    </div>
+    <!-- Side Bar used in Chart Views-->
+    <div id="sidebar-container" style="display:none;">
+      <div class="sidebar">
+        <h3>Select a Month</h3>
+        <ul id="month-list">
+          <li data-month="overall">Overall</li>
+          <!-- The months will be dynamically populated here -->
+        </ul>
+      </div>
+    </div>
+    <!-- Pie Chart Layout -->
+    <div id="chart-view" class="view-section">
+      <canvas id="income-expense-chart" width="400" height="400"></canvas>
     </div>
     <!-- Budget Rule Layout-->
     <div id="budget-rule-view" class="view-section" style="display:none;">
