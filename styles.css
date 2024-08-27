@@ -3,6 +3,7 @@
     justify-content: center;
     margin-top: 20px;
     padding-bottom: 10px;
+    width: 100%;
 }
   
 .top-button {
@@ -77,11 +78,12 @@ button:hover {
     justify-content: center;
     margin-top: 10px;
     margin-bottom: 30px;
+    width:100%;
 }
   
 .tab-button {
     padding: 10px 20px;
-    margin: 0 10px;
+    margin: 0 5px;
     cursor: pointer;
     border: 1px solid #007bff;
     background-color: #f4f4f4;
@@ -103,7 +105,7 @@ button:hover {
 .income-expense-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 20px 2px;
 }
   
 .income-expense-table th, .income-expense-table td {
@@ -236,14 +238,25 @@ button:hover {
     font-weight: bold;
 }
 
+#sidebar-container {
+    justify-content: center;
+    max-width: 100%;
+}
+
 .sidebar {
-    width: 95vw;
     background-color: #f4f4f4;
     padding: 20px;
     left: 0;
     height: 100%;
     border: 4px solid #ddd;
     margin-bottom: 20px;
+    margin-right: 15px;
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        width: 90%;
+    }
 }
   
 .sidebar h3 {
@@ -283,6 +296,7 @@ button:hover {
     justify-content:center;
     align-items: center;
     margin-top: 20px;
+    width: 100%;
 }
   
 #budget-chart {
@@ -328,4 +342,21 @@ button:hover {
     color: red;
     font-weight: bold;
 }
-  
+
+/* Mobile layout: chart above the table */
+@media (max-width: 700px) {
+    .comparison-container {
+        flex-direction: column; /* Stack the chart and table vertically */
+        align-items: center;
+    }
+
+    .budget-chart {
+        margin-bottom: 20px; /* Add space below the chart */
+        width: 100%; /* Ensure the chart takes full width on small screens */
+        max-width: 400px; /* Limit the maximum width for better appearance */
+    }
+
+    .comparison-table {
+        width: 100%; /* Make the table take full width on small screens */
+    }
+}
