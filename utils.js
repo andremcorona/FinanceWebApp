@@ -43,7 +43,7 @@ function displayExpenseEntries(dataKey = 'expenseEntries') {
         <td>${entry.date}</td>
         <td>${entry.category}</td>
         <td>$${parseFloat(entry.amount).toFixed(2)}</td>
-        <td>${entry.description ? entry.description : ''}</td>
+        <td>${entry.tag ? entry.tag : ''}</td>
         <td class="edit-td"><button class="edit-button" data-index="${index}" data-type="expense">Edit</button></td>
       `;
       expenseSection.appendChild(row);
@@ -119,12 +119,12 @@ function parseTextFile(textContent) {
         const date = parts[0].split(': ')[1];
         const categoryOrSource = parts[1].split(': ')[1];
         const amount = parseFloat(parts[2].split(': ')[1].replace('$', ''));
-        const descriptionOrNotes = parts[3] ? parts[3].split(': ')[1] : '';
+        const description = parts[3] ? parts[3].split(': ')[1] : '';
   
         if (currentSection === 'income') {
-          incomeEntries.push({ date, source: categoryOrSource, amount, notes: descriptionOrNotes });
+          incomeEntries.push({ date, source: categoryOrSource, amount, occurrence: description });
         } else if (currentSection === 'expense') {
-          expenseEntries.push({ date, category: categoryOrSource, amount, description: descriptionOrNotes });
+          expenseEntries.push({ date, category: categoryOrSource, amount, tag: description });
         }
       }
     });
@@ -256,26 +256,30 @@ let budgetChart;
 // 
 // This function will generate the 
 function generateBudgetComparison(incomeKey = 'incomeEntries', expenseKey = 'expenseEntries') {
+  const incomeEntries = JSON.parse(localStorage.getItem(incomeKey)) || [];
   const expenseEntries = JSON.parse(localStorage.getItem(expenseKey)) || [];
-  
+  const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
   let total = { Need: 0, Investment: 0, Want: 0 };
   let totalExpenses = 0;
+  
 
   expenseEntries.forEach(entry => {
-    total[entry.description] += parseFloat(entry.amount);
+    total[entry.tag] += parseFloat(entry.amount);
     totalExpenses += parseFloat(entry.amount);
   });
 
-  const needsPercent = (total.Need / totalExpenses) * 100;
-  const investmentsPercent = (total.Investment / totalExpenses) * 100;
-  const wantsPercent = (total.Want / totalExpenses) * 100;
+  const remainingIncome = totalIncome - totalExpenses;
+  const needsPercent = (total.Need / totalIncome) * 100;
+  const investmentsPercent = (total.Investment / totalIncome) * 100;
+  const wantsPercent = (total.Want / totalIncome) * 100;
 
   // Update the Doughnut chart
   const chartData = {
-    labels: ['Needs', 'Investments', 'Wants'],
+    labels: ['Needs', 'Investments', 'Wants',],
     datasets: [{
-      data: [total.Need.toFixed(2), total.Investment.toFixed(2), total.Want.toFixed(2)],
-      backgroundColor: ['#ff6384', '#70f511', '#ffa500'],
+      data: [total.Need.toFixed(2), total.Investment.toFixed(2), total.Want.toFixed(2), remainingIncome.toFixed(2)],
+      backgroundColor: ['#ff6384', '#70f511', '#ffa500', '#bfbbbb'],
     }]
   };
 
@@ -344,7 +348,9 @@ function populateMonthList() {
   // Add each month to the sidebar
   sortedMonths.forEach(month => {
     const monthItem = document.createElement('li');
-    monthItem.textContent = new Date(`${month}-01`).toLocaleString('default', { month: 'long', year: 'numeric' });
+    const [year, monthIndex] = month.split('-');
+    const monthName = new Date(year, monthIndex - 1).toLocaleString('default', { month: 'long', year: 'numeric' }); // Corrected display
+    monthItem.textContent = monthName;
     monthItem.dataset.month = month;
     monthList.appendChild(monthItem);
   });
@@ -364,11 +370,11 @@ populateMonthList();
 
 function updateViewForMonth(month) {
   if (month === 'overall') {
-    // Display overall data
-    displayIncomeEntries();
-    displayExpenseEntries();
-    updateChart();
-    generateBudgetComparison();
+    // Clear filtered data and use overall data
+    localStorage.removeItem('filteredIncomeEntries');
+    localStorage.removeItem('filteredExpenseEntries');
+    updateChart(); // Use overall data
+    generateBudgetComparison(); // Use overall data
   } else {
     // Filter data for the selected month
     const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
@@ -387,4 +393,16 @@ function updateViewForMonth(month) {
     updateChart('filteredIncomeEntries', 'filteredExpenseEntries');
     generateBudgetComparison('filteredIncomeEntries', 'filteredExpenseEntries');
   }
+}
+
+// Function to initialize the page with the Overall data selected
+function initializePage() {
+  // Add 'active' class to the Overall button
+  const overallButton = document.querySelector('[data-month="overall"]');
+  if (overallButton) {
+    overallButton.classList.add('active');
+  }
+
+  // Load the overall data
+  updateViewForMonth('overall');
 }

@@ -260,11 +260,12 @@ button:hover {
 .sidebar ul li {
     padding: 20px;
     cursor: pointer;
-    border-right: 1px solid #ddd;
+    border: 1px solid #ddd;
     transition: background-color 0.3s;
     display: inline-block;
     align-items: center;
     justify-content: space-between;
+    border-radius: 5px;
 }
   
 .sidebar ul li:hover {

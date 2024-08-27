@@ -19,12 +19,12 @@ document.getElementById('export-data').addEventListener('click', function() {
 
   let textContent = "Income Entries:\n";
   incomeEntries.forEach(entry => {
-    textContent += `Date: ${entry.date}, Source: ${entry.source}, Amount: $${entry.amount}, Notes: ${entry.notes || ''}\n`;
+    textContent += `Date: ${entry.date}, Source: ${entry.source}, Amount: $${entry.amount}, Occurence: ${entry.occurrence || ''}\n`;
   });
 
   textContent += "\nExpense Entries:\n";
   expenseEntries.forEach(entry => {
-    textContent += `Date: ${entry.date}, Category: ${entry.category}, Amount: $${entry.amount}, Description: ${entry.description || ''}\n`;
+    textContent += `Date: ${entry.date}, Category: ${entry.category}, Amount: $${entry.amount}, Tag: ${entry.tag || ''}\n`;
   });
 
   const blob = new Blob([textContent], { type: 'text/plain' });
@@ -115,6 +115,10 @@ document.getElementById('income-form').addEventListener('submit', function(e) {
   updateChart();
   generatePlannerView();
   generateBudgetComparison();
+  
+
+  document.getElementById('chart-view').style.display = 'none';
+
 
   // Clear the form
   this.reset();
@@ -198,20 +202,22 @@ document.getElementById('chart-tab').addEventListener('click', function() {
 Chart.register({
     id: 'centerText',
     beforeDraw: function(chart) {
+
+      const ctx = chart.ctx;
+      const width = chart.width;
+      const height = chart.height;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      
+      // Get totalIncome and totalExpenses
+      const incomeEntries = JSON.parse(localStorage.getItem('filteredIncomeEntries')) || JSON.parse(localStorage.getItem('incomeEntries')) || [];
+      const expenseEntries = JSON.parse(localStorage.getItem('filteredExpenseEntries')) || JSON.parse(localStorage.getItem('expenseEntries')) || [];
+      const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+      const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+      ctx.restore();
+
       if (chart.canvas.id === 'income-expense-chart') {
-        const ctx = chart.ctx;
-        const width = chart.width;
-        const height = chart.height;
-        const centerX = width / 2;
-        const centerY = height / 2;
-        
-        // Get totalIncome and totalExpenses
-        const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-        const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
-        const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-        const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-  
-        ctx.restore();
         
         // Display Income and Expenses text
         ctx.font = 'bold 20px Arial';
@@ -238,23 +244,16 @@ Chart.register({
         ctx.save();
       }
       if (chart.canvas.id === 'budget-chart') {
-        const ctx = chart.ctx;
-        const width = chart.width;
-        const height = chart.height;
-        const centerX = width / 2;
-        const centerY = height / 2;
-        
-        // Get totalIncome and totalExpenses
-        const incomeEntries = JSON.parse(localStorage.getItem('incomeEntries')) || [];
-        const expenseEntries = JSON.parse(localStorage.getItem('expenseEntries')) || [];
-        const totalIncome = incomeEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-        const totalExpenses = expenseEntries.reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
         
         let total = { Need: 0, Investment: 0, Want: 0 };
 
         expenseEntries.forEach(entry => {
-          total[entry.description] += parseFloat(entry.amount);
+          // Check if the description is one of the expected categories
+          if (total.hasOwnProperty(entry.tag)) {
+            total[entry.tag] += parseFloat(entry.amount);
+          }
         });
+        
 
         ctx.restore();
         
@@ -266,9 +265,9 @@ Chart.register({
 
         ctx.fillStyle = '#007bff'; // Blue for income
         ctx.fillText(`Income: $${totalIncome.toFixed(2)}`, centerX, centerY - 10);
-        ctx.fillStyle = '#ff6384'; // Blue for income
+        ctx.fillStyle = '#ff6384'; // Pink for Needs
         ctx.fillText(`Needs: $${total.Need.toFixed(2)}`, centerX, centerY + 15);
-        ctx.fillStyle = '#70f511'; // Red for expenses
+        ctx.fillStyle = '#70f511'; // Light Green for expenses
         ctx.fillText(`Investments: $${total.Investment.toFixed(2)}`, centerX, centerY + 40);
         ctx.fillStyle = '#ffa500'; // Orange for exceeded
         ctx.fillText(`Wants: $${total.Want.toFixed(2)}`, centerX, centerY + 65);
@@ -312,4 +311,9 @@ document.getElementById('budget-rule-tab').addEventListener('click', function() 
   document.getElementById('sidebar-container').style.display = 'block';
 
   generateBudgetComparison();
+});
+
+// Call this function when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initializePage();
 });
