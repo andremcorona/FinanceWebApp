@@ -52,6 +52,15 @@ document.getElementById('import-data').addEventListener('click', function() {
     reader.readAsText(file);
   });
 
+  //Update charts immediately if data is imported
+  displayIncomeEntries();
+  updateChart();
+  generatePlannerView();
+  generateBudgetComparison();
+  
+
+  document.getElementById('chart-view').style.display = 'none';
+
   fileInput.click();
 });
 
