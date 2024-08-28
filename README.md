@@ -9,3 +9,5 @@ I have created this finance tracker because I wanted a simple tracker for myself
 My personal reason for creating this tracker is to gain experience in web development.
 I will be maintaining this project for as long as I can. Feel free to use this code 
 as a template to make your own.
+
+Try it for yourself at: https://amcfinance.netlify.app/
