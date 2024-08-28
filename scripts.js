@@ -325,4 +325,6 @@ document.getElementById('budget-rule-tab').addEventListener('click', function() 
 // Call this function when the page loads
 document.addEventListener('DOMContentLoaded', function() {
   initializePage();
+  
+  document.getElementById('chart-view').style.display = 'none';
 });
